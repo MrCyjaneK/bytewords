@@ -69,8 +69,11 @@ Uint8List hexToUint8List(String hexString) {
 List<String> uint8ListToURQR(Uint8List list, String tag,
     {int fragLenth = 130}) {
   List<String> retList = [];
-  final frames = (list.length % fragLenth).ceil();
-  int frame = 0;
+  int frames = 1;
+  for (var i = 0; i < list.length; i += fragLenth) {
+    frames++;
+  }
+  int frame = 1;
   for (var i = 0; i < list.length; i += fragLenth) {
     var end = (i + fragLenth < list.length) ? i + fragLenth : list.length;
     var chunk = list.sublist(i, end);
@@ -93,7 +96,7 @@ class URQRData {
   final int count;
 }
 
-URQRData URQRToUint8List(List<String> urqr) {
+URQRData URQRToURQRData(List<String> urqr) {
   urqr.sort();
   print(urqr);
   List<int> data = [];

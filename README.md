@@ -16,5 +16,5 @@ class URQRData {
   final double progress;
   final int count;
 }
-URQRData URQRToUint8List(List<String> urqr);
+URQRData URQRToURQRData(List<String> urqr);
 ```
