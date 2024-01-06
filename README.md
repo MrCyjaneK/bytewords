@@ -8,7 +8,5 @@
 typedef ByteWords = String;
 ByteWords uint8ListToBytewords(Uint8List list_);
 ByteWords uint8ListToBytewordsShort(Uint8List list);
-Uint8List bytewordsToUint8List(ByteWords byteWords);
+Uint8List bytewordsToUint8List(ByteWords byteWords); <--- throw's on checksum mismatch'
 ```
-
-Functions do what you would expect them to do. There is no error handling, we trust you to provide the correct string.
