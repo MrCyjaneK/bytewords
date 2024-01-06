@@ -69,7 +69,7 @@ Uint8List hexToUint8List(String hexString) {
 List<String> uint8ListToURQR(Uint8List list, String tag,
     {int fragLenth = 130}) {
   List<String> retList = [];
-  int frames = 1;
+  int frames = 0;
   for (var i = 0; i < list.length; i += fragLenth) {
     frames++;
   }
