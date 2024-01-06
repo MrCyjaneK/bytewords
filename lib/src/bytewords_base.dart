@@ -105,7 +105,7 @@ URQRData URQRToURQRData(List<String> urqr) {
   int count = 0;
   for (var elm in urqr) {
     final s = elm.substring(elm.indexOf(":")); // strip down ur: prefix
-    final s2 = elm.split("/");
+    final s2 = s.split("/");
     tag = s2[0];
     final frameStr = s2[1].split("-");
     final curFrame = int.parse(frameStr[0]);
