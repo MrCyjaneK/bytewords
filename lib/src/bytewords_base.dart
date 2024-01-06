@@ -79,3 +79,39 @@ List<String> uint8ListToURQR(Uint8List list, String tag,
   }
   return retList;
 }
+
+class URQRData {
+  URQRData({
+    required this.tag,
+    required this.data,
+    required this.progress,
+    required this.count,
+  });
+  final String tag;
+  final Uint8List data;
+  final double progress;
+  final int count;
+}
+
+URQRData URQRToUint8List(List<String> urqr) {
+  urqr.sort();
+  print(urqr);
+  List<int> data = [];
+  String tag = '';
+  int count = 0;
+  for (var elm in urqr) {
+    final s = elm.substring(elm.indexOf(":")); // strip down ur: prefix
+    final s2 = elm.split("/");
+    tag = s2[0];
+    final frameStr = s2[1].split("-");
+    final curFrame = int.parse(frameStr[0]);
+    count = int.parse(frameStr[1]);
+    final byteWords = s2[2];
+    data.addAll(bytewordsToUint8List(byteWords));
+  }
+  return URQRData(
+      tag: tag,
+      data: Uint8List.fromList(data),
+      progress: urqr.length / count,
+      count: count);
+}

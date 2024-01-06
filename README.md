@@ -9,6 +9,12 @@ typedef ByteWords = String;
 ByteWords uint8ListToBytewords(Uint8List list_);
 ByteWords uint8ListToBytewordsShort(Uint8List list);
 Uint8List bytewordsToUint8List(ByteWords byteWords); <--- throw's on checksum mismatch'
-
 List<String> uint8ListToURQR(Uint8List list, String tag, {int fragLenth = 130}); <--- 'ur:${tag}/1-2/lpad....ediao'
+class URQRData {
+  final String tag;
+  final Uint8List data;
+  final double progress;
+  final int count;
+}
+URQRData URQRToUint8List(List<String> urqr);
 ```
