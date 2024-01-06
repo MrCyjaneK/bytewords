@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:bytewords/bytewords.dart';
 import 'package:test/test.dart';
 
@@ -9,5 +11,14 @@ void main() {
         'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwin');
     assert(uint8ListToBytewordsShort(data) ==
         'tantjzoeadgdstaslplabghydrpfmkbggufgludprfgmaosecffltn');
+  });
+  test('urqr decode', () {
+    List<String> s = [
+      'ur:debug/1-2/gsjljpihjncxinjojkkpjncxiejljzjljpcxjkinjycxhsjnihjydwcxiajljtjkihiajyihjykpjpcxhsieinjoinjkiainjtiocxihjzinjydmcxgthskpjpinjkcxinhsiakpjzinjkcxieinhsjncxiniecxjtinidiscxjnhsjzihjkkphsiehsdwcxjtjljtcxhsjzinjskphsjncxieinhsjncxhsjzinjskpihjydmcxgdjphsihjkihjtjy',
+      'ur:debug/2-2/cxjzkpiajykpjkcxjyinjtiainiekpjtjycxiekpincxkoinjyhsihcxjoishsjpihjyjphsdmcxgdihjzjzihjtjyihjkjskpihcxishsidinjyhsjtjycxjnjljpidincxjyjpinjkjyinjskpihcxjkihjtihiajykpjkcxihjycxjtihjykpjkcxihjycxjnhsjzihjkkphsiehscx'
+    ];
+    final data = URQRToURQRData(s);
+    print(utf8.decode(data
+        .data)); // Lorem ipsum dolor sit amet, consectetur adimscing elit. Mauris iaculis diam id nibh malesuada, non aliquam diam aliquet. Pra luctus tincidunt dui vitae pharetra. Pellentesque habitant morbi tristique senectus et netus et males
   });
 }

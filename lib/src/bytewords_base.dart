@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:ffi';
 import 'dart:typed_data';
 
@@ -29,25 +30,18 @@ ByteWords uint8ListToBytewordsShort(Uint8List list) {
 Uint8List bytewordsToUint8List(ByteWords byteWords) {
   List<int> retList = [];
 
-  for (var i = 0; i < byteWords.length;) {
+  for (var i = 0; i + 2 < byteWords.length;) {
     for (var j = 0; j < words.length; j++) {
-      if (byteWords.substring(i, i + 4) == words[j]) {
+      if (byteWords.substring(i, i + 2) == words[j][0] + words[j][3]) {
+        i += 2;
         retList.add(j);
         break;
-      } else if (byteWords.substring(i, i + 2) == words[j][0] + words[j][3]) {
+      } else if (byteWords.substring(i, i + 4) == words[j]) {
+        i += 4;
         retList.add(j);
         break;
       }
     }
-  }
-
-  final checksum = hexToUint8List(
-      Crc32.calculate(retList.take(retList.length - 5)).toRadixString(16));
-  if (checksum[0] != retList[byteWords.length - 4] ||
-      checksum[1] != retList[byteWords.length - 3] ||
-      checksum[2] != retList[byteWords.length - 2] ||
-      checksum[3] != retList[byteWords.length - 1]) {
-    throw Exception("invalid bytewords");
   }
   return Uint8List.fromList(retList.take(retList.length - 4).toList());
 }
@@ -94,11 +88,18 @@ class URQRData {
   final Uint8List data;
   final double progress;
   final int count;
+  Map<String, dynamic> toJson() {
+    return {
+      "tag": tag,
+      "data": data,
+      "progress": progress,
+      "count": count,
+    };
+  }
 }
 
 URQRData URQRToURQRData(List<String> urqr) {
   urqr.sort();
-  print(urqr);
   List<int> data = [];
   String tag = '';
   int count = 0;
@@ -110,7 +111,8 @@ URQRData URQRToURQRData(List<String> urqr) {
     final curFrame = int.parse(frameStr[0]);
     count = int.parse(frameStr[1]);
     final byteWords = s2[2];
-    data.addAll(bytewordsToUint8List(byteWords));
+    final bw = bytewordsToUint8List(byteWords);
+    data.addAll(bw);
   }
   return URQRData(
       tag: tag,
