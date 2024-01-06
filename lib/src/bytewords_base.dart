@@ -1,3 +1,4 @@
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:bytewords/src/external/crc32.dart';
@@ -61,4 +62,20 @@ Uint8List hexToUint8List(String hexString) {
     result[i ~/ 2] = byte;
   }
   return result;
+}
+
+// ur:xmr-keyimage/1-2/lpad....ediao
+
+List<String> uint8ListToURQR(Uint8List list, String tag,
+    {int fragLenth = 130}) {
+  List<String> retList = [];
+  final frames = (list.length % fragLenth).ceil();
+  int frame = 0;
+  for (var i = 0; i < list.length; i += fragLenth) {
+    var end = (i + fragLenth < list.length) ? i + fragLenth : list.length;
+    var chunk = list.sublist(i, end);
+    retList.add('ur:$tag/$frame-$frames/${uint8ListToBytewordsShort(chunk)}');
+    frame++;
+  }
+  return retList;
 }
