@@ -1,5 +1,3 @@
-import 'dart:convert';
-import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:bytewords/src/external/crc32.dart';
@@ -85,17 +83,17 @@ String uint8ListToHex(Uint8List uint8List) {
 // ur:xmr-keyimage/1-2/lpad....ediao
 
 List<String> uint8ListToURQR(Uint8List list, String tag,
-    {int fragLenth = 130}) {
+    {int fragLength = 130}) {
   List<String> retList = [];
+  final bw = uint8ListToBytewordsShort(list);
   int frames = 0;
-  for (var i = 0; i < list.length; i += fragLenth) {
+  for (var i = 0; i < bw.length; i += fragLength) {
     frames++;
   }
   int frame = 1;
-  for (var i = 0; i < list.length; i += fragLenth) {
-    var end = (i + fragLenth < list.length) ? i + fragLenth : list.length;
-    var chunk = list.sublist(i, end);
-    retList.add('ur:$tag/$frame-$frames/${uint8ListToBytewordsShort(chunk)}');
+  for (var i = 0; i < bw.length; i += fragLength * 2) {
+    var end = (i + fragLength < list.length) ? i + fragLength : list.length;
+    retList.add('ur:$tag/$frame-$frames/${bw.substring(i, fragLength * 2)}');
     frame++;
   }
   return retList;
