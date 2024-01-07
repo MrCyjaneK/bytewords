@@ -91,9 +91,9 @@ List<String> uint8ListToURQR(Uint8List list, String tag,
     frames++;
   }
   int frame = 1;
-  for (var i = 0; i < bw.length; i += fragLength * 2) {
+  for (var i = 0; i < bw.length; i += fragLength) {
     var end = (i + fragLength < list.length) ? i + fragLength : list.length;
-    retList.add('ur:$tag/$frame-$frames/${bw.substring(i, fragLength * 2)}');
+    retList.add('ur:$tag/$frame-$frames/${bw.substring(i, fragLength)}');
     frame++;
   }
   return retList;
