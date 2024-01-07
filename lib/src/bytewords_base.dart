@@ -122,9 +122,9 @@ class URQRData {
 
 URQRData URQRToURQRData(List<String> urqr) {
   urqr.sort();
-  List<int> data = [];
   String tag = '';
   int count = 0;
+  String bw = '';
   for (var elm in urqr) {
     final s = elm.substring(elm.indexOf(":") + 1); // strip down ur: prefix
     final s2 = s.split("/");
@@ -133,12 +133,13 @@ URQRData URQRToURQRData(List<String> urqr) {
     final curFrame = int.parse(frameStr[0]);
     count = int.parse(frameStr[1]);
     final byteWords = s2[2];
-    final bw = bytewordsToUint8List(byteWords);
-    data.addAll(bw);
+    bw += byteWords;
   }
+  final data = bytewordsToUint8List(bw);
   return URQRData(
-      tag: tag,
-      data: Uint8List.fromList(data),
-      progress: urqr.length / count,
-      count: count);
+    tag: tag,
+    data: Uint8List.fromList(data),
+    progress: urqr.length / count,
+    count: count,
+  );
 }
