@@ -8,9 +8,29 @@ void main() {
     final data = hexToUint8List(
         'd99d6ca20150c7098580125e2ab0981253468b2dbc5202c11947da');
     assert(uint8ListToBytewords(data) ==
-        'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwin');
+        'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwinsoloaquaworkbald');
     assert(uint8ListToBytewordsShort(data) ==
-        'tantjzoeadgdstaslplabghydrpfmkbggufgludprfgmaosecffltn');
+        'tantjzoeadgdstaslplabghydrpfmkbggufgludprfgmaosecffltnsoaawkbd');
+  });
+  test('encode tiny', () {
+    final data = hexToUint8List('4141');
+    print(data);
+    final dec = uint8ListToBytewords(data);
+    print(dec);
+    final decShort = uint8ListToBytewordsShort(data);
+    print(decShort);
+  });
+  test('decode tiny (long)', () {
+    // fpfppthncary
+    final data = bytewordsToUint8List('flapflapparthorncolaruby');
+    // final data = bytewordsToUint8List('fpfppthncary');
+    print(data);
+  });
+  test('decode', () {
+    final data =
+        'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwin';
+    final dec = bytewordsToUint8List(data);
+    print(uint8ListToHex(dec));
   });
   test('urqr decode', () {
     List<String> s = [
