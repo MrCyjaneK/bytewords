@@ -109,23 +109,28 @@ class URQRData {
     required this.data,
     required this.progress,
     required this.count,
+    required this.error,
   });
   final String tag;
   final Uint8List data;
   final double progress;
   final int count;
+  final String error;
   Map<String, dynamic> toJson() {
     return {
       "tag": tag,
       "data": data,
       "progress": progress,
       "count": count,
+      "error": error,
     };
   }
 }
 
-URQRData URQRToURQRData(List<String> urqr) {
+URQRData URQRToURQRData(List<String> urqr_) {
+  final urqr = urqr_.toSet().toList();
   urqr.sort();
+
   String tag = '';
   int count = 0;
   String bw = '';
@@ -139,11 +144,17 @@ URQRData URQRToURQRData(List<String> urqr) {
     final byteWords = s2[2];
     bw += byteWords;
   }
-  final data = bytewordsToUint8List(bw);
+  Uint8List? data;
+  String? error;
+  try {
+    data = bytewordsToUint8List(bw);
+  } catch (e) {
+    error = e.toString();
+  }
   return URQRData(
-    tag: tag,
-    data: Uint8List.fromList(data),
-    progress: urqr.length / count,
-    count: count,
-  );
+      tag: tag,
+      data: data ?? Uint8List.fromList([]),
+      progress: urqr.length / count,
+      count: count,
+      error: error ?? "");
 }
