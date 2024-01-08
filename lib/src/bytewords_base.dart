@@ -13,7 +13,7 @@ ByteWords uint8ListToBytewords(Uint8List list_) {
   list.addAll(crc32);
   String str = '';
   for (var elm in list) {
-    str += words[elm];
+    str += words[elm]!;
   }
   return str;
 }
@@ -25,30 +25,31 @@ ByteWords uint8ListToBytewordsShort(Uint8List list_) {
   list.addAll(crc32);
   String str = '';
   for (var elm in list) {
-    str += words[elm][0] + words[elm][3];
+    str += wordsShort[elm]!;
   }
   return str;
 }
 
-Uint8List bytewordsToUint8List(ByteWords byteWords) {
+Uint8List bytewordsToUint8List(ByteWords byteWords, {required bool isLong}) {
   List<int> retList = [];
-  bool isLong = false;
   for (var i = 0; i + (isLong ? 4 : 2) <= byteWords.length;) {
-    // print("$i ${byteWords.substring(i, i + 4)} or ${byteWords.substring(i, i + 2)}");
-    try {
-      if (wordsRev[byteWords.substring(i, i + 4)] != null) {
-        isLong = true;
-        retList.add(wordsRev[byteWords.substring(i, i + 4)]!);
-        i += 4;
+    if (!isLong) {
+      if (wordsRevShort[byteWords.substring(i, i + 2)] != null) {
+        retList.add(wordsRevShort[byteWords.substring(i, i + 2)]!);
+        i += 2;
         continue;
       }
-    } catch (e) {}
-    if (wordsRevShort[byteWords.substring(i, i + 2)] != null) {
-      isLong = false;
-      retList.add(wordsRevShort[byteWords.substring(i, i + 2)]!);
-      i += 2;
+    } else {
+      if (byteWords.length >= i + 4) {
+        if (wordsRev[byteWords.substring(i, i + 4)] != null) {
+          retList.add(wordsRev[byteWords.substring(i, i + 4)]!);
+          i += 4;
+          continue;
+        }
+      }
     }
   }
+  if (retList.length < 4) return Uint8List.fromList([]);
   final checksum = hexToUint8List(
     Crc32.calculate(retList.take(retList.length - 4).toList())
         .toRadixString(16),
@@ -57,7 +58,8 @@ Uint8List bytewordsToUint8List(ByteWords byteWords) {
       checksum[1] != retList[retList.length - 3] ||
       checksum[2] != retList[retList.length - 2] ||
       checksum[3] != retList[retList.length - 1]) {
-    throw Exception("invalid bytewords");
+    //throw Exception("invalid bytewords.");
+    print("invalid bytewords");
   }
   return Uint8List.fromList(retList.take(retList.length - 4).toList());
 }
@@ -104,32 +106,45 @@ List<String> uint8ListToURQR(Uint8List list, String tag,
 }
 
 class URQRData {
-  URQRData({
-    required this.tag,
-    required this.data,
-    required this.progress,
-    required this.count,
-    required this.error,
-  });
+  URQRData(
+      {required this.tag,
+      required this.data,
+      required this.str,
+      required this.progress,
+      required this.count,
+      required this.error,
+      required this.inputs});
   final String tag;
   final Uint8List data;
+  final String str;
   final double progress;
   final int count;
   final String error;
+  final List<String> inputs;
   Map<String, dynamic> toJson() {
     return {
       "tag": tag,
+      "str": str,
       "data": data,
       "progress": progress,
       "count": count,
       "error": error,
+      "inputs": inputs,
     };
   }
 }
 
 URQRData URQRToURQRData(List<String> urqr_) {
   final urqr = urqr_.toSet().toList();
-  urqr.sort();
+  urqr.sort((s1, s2) {
+    final s1s = s1.split("/");
+    final s1frameStr = s1s[1].split("-");
+    final s1curFrame = int.parse(s1frameStr[0]);
+    final s2s = s2.split("/");
+    final s2frameStr = s2s[1].split("-");
+    final s2curFrame = int.parse(s2frameStr[0]);
+    return s1curFrame - s2curFrame;
+  });
 
   String tag = '';
   int count = 0;
@@ -139,22 +154,27 @@ URQRData URQRToURQRData(List<String> urqr_) {
     final s2 = s.split("/");
     tag = s2[0];
     final frameStr = s2[1].split("-");
-    final curFrame = int.parse(frameStr[0]);
+    // final curFrame = int.parse(frameStr[0]);
     count = int.parse(frameStr[1]);
     final byteWords = s2[2];
     bw += byteWords;
   }
   Uint8List? data;
   String? error;
-  try {
-    data = bytewordsToUint8List(bw);
-  } catch (e) {
-    error = e.toString();
+  if ((urqr.length / count) == 1) {
+    try {
+      data = bytewordsToUint8List(bw, isLong: false);
+    } catch (e) {
+      error = e.toString();
+    }
   }
   return URQRData(
-      tag: tag,
-      data: data ?? Uint8List.fromList([]),
-      progress: urqr.length / count,
-      count: count,
-      error: error ?? "");
+    tag: tag,
+    str: bw,
+    data: data ?? Uint8List.fromList([]),
+    progress: count == 0 ? 0 : (urqr.length / count),
+    count: count,
+    error: error ?? "",
+    inputs: urqr,
+  );
 }
