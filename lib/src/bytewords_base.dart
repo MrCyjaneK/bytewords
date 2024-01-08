@@ -33,30 +33,33 @@ ByteWords uint8ListToBytewordsShort(Uint8List list_) {
 Uint8List bytewordsToUint8List(ByteWords byteWords) {
   List<int> retList = [];
   bool isLong = false;
-  for (var i = 0; i + (isLong ? 4 : 2) < byteWords.length;) {
+  for (var i = 0; i + (isLong ? 4 : 2) <= byteWords.length;) {
     // print("$i ${byteWords.substring(i, i + 4)} or ${byteWords.substring(i, i + 2)}");
-    if (wordsRev[byteWords.substring(i, i + 4)] != null) {
-      retList.add(wordsRev[byteWords.substring(i, i + 4)]!);
-      isLong = true;
-      i += 4;
-    } else if (wordsRevShort[byteWords.substring(i, i + 2)] != null) {
+    try {
+      if (wordsRev[byteWords.substring(i, i + 4)] != null) {
+        isLong = true;
+        retList.add(wordsRev[byteWords.substring(i, i + 4)]!);
+        i += 4;
+        continue;
+      }
+    } catch (e) {}
+    if (wordsRevShort[byteWords.substring(i, i + 2)] != null) {
       isLong = false;
       retList.add(wordsRevShort[byteWords.substring(i, i + 2)]!);
       i += 2;
     }
   }
-  // print(retList);
   final checksum = hexToUint8List(
-    Crc32.calculate(retList.take(retList.length - 3).toList())
+    Crc32.calculate(retList.take(retList.length - 4).toList())
         .toRadixString(16),
   );
-  // if (checksum[0] != retList[retList.length - 4] ||
-  //     checksum[1] != retList[retList.length - 3] ||
-  //     checksum[2] != retList[retList.length - 2] ||
-  //     checksum[3] != retList[retList.length - 1]) {
-  //   throw Exception("invalid bytewords");
-  // }
-  return Uint8List.fromList(retList.take(retList.length - 3).toList());
+  if (checksum[0] != retList[retList.length - 4] ||
+      checksum[1] != retList[retList.length - 3] ||
+      checksum[2] != retList[retList.length - 2] ||
+      checksum[3] != retList[retList.length - 1]) {
+    throw Exception("invalid bytewords");
+  }
+  return Uint8List.fromList(retList.take(retList.length - 4).toList());
 }
 
 Uint8List hexToUint8List(String hexString) {

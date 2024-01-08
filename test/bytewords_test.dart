@@ -12,25 +12,22 @@ void main() {
     assert(uint8ListToBytewordsShort(data) ==
         'tantjzoeadgdstaslplabghydrpfmkbggufgludprfgmaosecffltnsoaawkbd');
   });
-  test('encode tiny', () {
+  test('encode x decode tiny', () {
     final data = hexToUint8List('4141');
-    print(data);
     final dec = uint8ListToBytewords(data);
-    print(dec);
+    assert(dec == "flapflapparthorncolaruby");
     final decShort = uint8ListToBytewordsShort(data);
-    print(decShort);
-  });
-  test('decode tiny (long)', () {
-    // fpfppthncary
-    final data = bytewordsToUint8List('flapflapparthorncolaruby');
-    // final data = bytewordsToUint8List('fpfppthncary');
-    print(data);
+    assert(decShort == "fpfppthncary");
+    final enc = uint8ListToHex(bytewordsToUint8List(dec));
+    assert(enc == "4141");
+    final encShort = uint8ListToHex(bytewordsToUint8List(decShort));
+    assert(encShort == "4141");
   });
   test('decode', () {
     final data =
-        'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwin';
-    final dec = bytewordsToUint8List(data);
-    print(uint8ListToHex(dec));
+        'tunanextjazzoboeacidgoodslotaxislimplavabragholydoorpuffmonkbraggurufrogluaudroproofgrimalsosafecheffueltwinsoloaquaworkbald';
+    final dec = uint8ListToHex(bytewordsToUint8List(data));
+    assert(dec == "d99d6ca20150c7098580125e2ab0981253468b2dbc5202c11947da");
   });
   // test('urqr decode', () {
   // List<String> s = [

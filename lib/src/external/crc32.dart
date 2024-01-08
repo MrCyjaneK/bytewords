@@ -6,6 +6,7 @@
    License: MIT
 */
 import 'dart:convert' show utf8;
+import 'dart:typed_data';
 
 /// Computes Cyclic Redundancy Check values.
 class Crc32 {
@@ -14,10 +15,7 @@ class Crc32 {
   /// The return value is an unsigned integer.
   ///
   /// You may optionally specify the beginning CRC value.
-  static int calculate(var input, [int crc = 0]) {
-    if (input == null) throw ArgumentError.notNull('input');
-    if (input is String) input = utf8.encode(input);
-
+  static int calculate(List<int> input, [int crc = 0]) {
     crc = crc ^ (0xffffffff);
 
     for (var byte in input) {
