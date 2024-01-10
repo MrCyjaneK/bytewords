@@ -66,6 +66,7 @@ Uint8List bytewordsToUint8List(ByteWords byteWords, {required bool isLong}) {
 
 Uint8List hexToUint8List(String hexString) {
   hexString = hexString.replaceAll(' ', '');
+  hexString = hexString.padLeft(8, "0");
   final length = hexString.length;
   final result = Uint8List(length ~/ 2);
   for (var i = 0; i < length; i += 2) {
