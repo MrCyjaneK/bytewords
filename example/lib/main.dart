@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'dart:async';
 
@@ -15,14 +17,16 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late int sumResult;
-  late Future<int> sumAsyncResult;
+  late Uint8List sumResult;
+  late String sumAsyncResult;
 
   @override
   void initState() {
     super.initState();
-    sumResult = bytewords.sum(1, 2);
-    sumAsyncResult = bytewords.sumAsync(3, 4);
+    sumResult = bytewords.bytewordsDecode(
+        bytewords.BytewordsStyle.minimal, 'aeadaolazmjendeoti');
+    sumAsyncResult =
+        bytewords.bytewordsEncode(bytewords.BytewordsStyle.minimal, sumResult);
   }
 
   @override
@@ -47,22 +51,15 @@ class _MyAppState extends State<MyApp> {
                 ),
                 spacerSmall,
                 Text(
-                  'sum(1, 2) = $sumResult',
+                  'decode aeadaolazmjendeoti = $sumResult',
                   style: textStyle,
                   textAlign: TextAlign.center,
                 ),
                 spacerSmall,
-                FutureBuilder<int>(
-                  future: sumAsyncResult,
-                  builder: (BuildContext context, AsyncSnapshot<int> value) {
-                    final displayValue =
-                        (value.hasData) ? value.data : 'loading';
-                    return Text(
-                      'await sumAsync(3, 4) = $displayValue',
-                      style: textStyle,
-                      textAlign: TextAlign.center,
-                    );
-                  },
+                Text(
+                  'encode ($sumResult) = $sumAsyncResult',
+                  style: textStyle,
+                  textAlign: TextAlign.center,
                 ),
               ],
             ),

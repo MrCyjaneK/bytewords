@@ -8,12 +8,12 @@ environment:
   flutter: '>=3.3.0'
 
 dependencies:
+  ffi: ^2.1.2
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
 
 dev_dependencies:
-  ffi: ^2.1.0
   ffigen: ^9.0.1
   flutter_test:
     sdk: flutter
@@ -79,3 +79,17 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+
+ffigen:
+  name: BytewordsBindings
+  description: Blockchain Commons bc-bytewords bindings
+  output: 'lib/bytewords_bindings_generated.dart'
+  headers:
+    entry-points:
+      - 'src/bytewords.h'
+
+  exclude-all-by-default: true
+  functions:
+    include:
+      - "bytewords_.+"
+      - "bw_.+"
